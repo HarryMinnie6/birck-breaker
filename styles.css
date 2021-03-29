@@ -1,0 +1,23 @@
+* {
+    margin: 0;
+    padding: 0;
+  }
+  
+  .game-display {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  .high-score {
+    margin: 30px 0 20px;
+  }
+  .game-board {
+    border: 1px solid black;
+    border-radius: 5px;
+  }
+  .reset {
+    margin: 30px 0 20px;
+  }
+  
