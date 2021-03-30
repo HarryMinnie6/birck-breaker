@@ -4,11 +4,19 @@ const canvas = document.querySelector(".game-board");
 
 const context = canvas.getContext("2d");
 
+const scoreDisplay = document.querySelector(".high-score");
+
+const resetGame = document.querySelector(".reset");
+
 canvas.height = 500;
 canvas.width = 500;
 
 //ball speed
 let speed = 3;
+
+//player score
+let score = 0;
+let highScore = parseInt(localStorage.getItem("highScore"));
 
 //for the left and right arrow keys
 let right_Arrow_Pressed = false;
@@ -27,7 +35,7 @@ let ball = {
     context.arc(this.x, this.y, this.radius, 0, Math.PI * 2, true);
     context.closePath();
     context.fill();
-  }
+  },
 };
 
 //creating the paddle
@@ -41,7 +49,7 @@ let paddle = {
     context.fillStyle = "blue";
     context.closePath();
     context.fill();
-  }
+  },
 };
 
 //listening for arrow keys being pushed
@@ -64,7 +72,20 @@ function keyUp(e) {
     left_Arrow_Pressed = false;
   }
 }
+if (isNaN(highScore)) {
+  highScore = 0;
+}
+scoreDisplay.innerHTML = `High Score: ${highScore}`;
 
+resetGame.addEventListener("click", () => {
+  console.log("clicked");
+  localStorage.setItem("highScore", "0");
+  score = 0;
+  scoreDisplay.innerHTML = `High Score: 0`;
+  drawBricks();
+});
+
+//moving the paddle
 function movePaddle() {
   if (right_Arrow_Pressed) {
     paddle.x += 5;
@@ -81,16 +102,13 @@ function movePaddle() {
   }
 }
 
-//player score
-let score = 0;
-
 function renderScore() {
   context.font = "16px Arial";
   context.fillStyle = "black";
   context.fillText("Score: " + score, 10, 20);
 }
 
-//rending the game
+//rendering the game
 function play() {
   context.clearRect(0, 0, canvas.width, canvas.height);
   ball.draw();
@@ -123,6 +141,16 @@ function play() {
     ball.direction_Y *= -1;
   }
   //reset the score if the ball touches the bottom
+  if (ball.y + ball.radius > canvas.height) {
+    if (score > parseInt(localStorage.getItem("highScore"))) {
+      localStorage.setItem("highScore", score.toString());
+      scoreDisplay.innerHTML = `High Score: ${score}`;
+    }
+    score = 0;
+    generateBricks();
+    ball.direction_X = ball.y;
+    ball.direction_Y = ball.x;.
+  }
 
   requestAnimationFrame(play);
 }
@@ -146,7 +174,7 @@ function generateBricks() {
       bricks[columns][rows] = {
         x: 0,
         y: 0,
-        status: 1
+        status: 1,
       };
     }
   }
