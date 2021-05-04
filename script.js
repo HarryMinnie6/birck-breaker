@@ -7,8 +7,9 @@ const context = canvas.getContext("2d");
 const scoreDisplay = document.querySelector(".high-score");
 
 const resetGame = document.querySelector(".reset");
+const resetAfterDeath = document.querySelector(".reset-game");
 
-canvas.height = 500;
+canvas.height = 400;
 canvas.width = 500;
 
 //ball speed
@@ -31,11 +32,12 @@ let ball = {
   radius: 8,
   draw: function () {
     context.beginPath();
-    context.fillStyle = "green";
+    context.fillStyle = "#8193A6";
     context.arc(this.x, this.y, this.radius, 0, Math.PI * 2, true);
+
     context.closePath();
     context.fill();
-  },
+  }
 };
 
 //creating the paddle
@@ -46,10 +48,10 @@ let paddle = {
   draw: function () {
     context.beginPath();
     context.rect(this.x, canvas.height - this.height, this.width, this.height);
-    context.fillStyle = "blue";
+    context.fillStyle = "#F5749C";
     context.closePath();
     context.fill();
-  },
+  }
 };
 
 //listening for arrow keys being pushed
@@ -84,6 +86,9 @@ resetGame.addEventListener("click", () => {
   scoreDisplay.innerHTML = `High Score: 0`;
   drawBricks();
 });
+resetAfterDeath.addEventListener("click", () => {
+  window.location.reload();
+});
 
 //moving the paddle
 function movePaddle() {
@@ -104,7 +109,7 @@ function movePaddle() {
 
 function renderScore() {
   context.font = "16px Arial";
-  context.fillStyle = "black";
+  context.fillStyle = "white";
   context.fillText("Score: " + score, 10, 20);
 }
 
@@ -118,6 +123,7 @@ function play() {
   brickCollisionDetection();
   levelUp();
   renderScore();
+
   //getting the ball to move
   ball.x += ball.direction_X;
   ball.y += ball.direction_Y;
@@ -147,9 +153,12 @@ function play() {
       scoreDisplay.innerHTML = `High Score: ${score}`;
     }
     score = 0;
-    generateBricks();
+    setTimeout(function () {
+      resetAfterDeath.style.display = "flex";
+    }, 500);
+
     ball.direction_X = ball.y;
-    ball.direction_Y = ball.x;.
+    ball.direction_Y = ball.x;
   }
 
   requestAnimationFrame(play);
@@ -174,7 +183,7 @@ function generateBricks() {
       bricks[columns][rows] = {
         x: 0,
         y: 0,
-        status: 1,
+        status: 1
       };
     }
   }
@@ -193,7 +202,7 @@ function drawBricks() {
         //drawing bricks onto canvas
         context.beginPath();
         context.rect(brickX, brickY, brick_Width, brick_Height);
-        context.fillStyle = "red";
+        context.fillStyle = "#A9D800";
         context.fill();
         context.closePath();
       }
@@ -227,7 +236,7 @@ let gameLevelUp = true;
 
 //increasing speed when all bricks are broken
 function levelUp() {
-  if (score % 15 === 0 && score != 0) {
+  if (score % 15 === 0 && score !== 0) {
     //making sure bricks will load for new "level" when the ball is in the bottom half of the canvas
     if (ball.y > canvas.height / 2) {
       generateBricks();
@@ -241,7 +250,7 @@ function levelUp() {
         gameLevelUp = false;
       }
     }
-    if (score % 15 != 0) {
+    if (score % 15 !== 0) {
       gameLevelUp = true;
     }
   }
